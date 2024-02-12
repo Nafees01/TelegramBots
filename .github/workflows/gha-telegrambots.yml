@@ -7,30 +7,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, windows-latest]
+        java-version: ['11', '11-ea', 'openjdk11', 'openjdk-ea']
         include:
-          - jdk: oraclejdk11
-            label: JDK11
-          - jdk: oraclejdk-ea
-            label: JDK-EA
-          - jdk: openjdk11
-            label: OpenJDK11
-          - jdk: openjdk-ea
-            label: OpenJDK-EA
+          - java-version: '11'
+            distribution: 'adopt'
+          - java-version: '11-ea'
+            distribution: 'adopt'
+          - java-version: 'openjdk11'
+            distribution: 'adopt'
+          - java-version: 'openjdk-ea'
+            distribution: 'adopt'
         exclude:
-          - jdk: oraclejdk-ea
-          - jdk: openjdk-ea
+          - java-version: '11-ea'
+          - java-version: 'openjdk-ea'
 
     runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up JDK ${{ matrix.label }}
+    - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.jdk }}
-        distribution: 'adopt'
-        cache: 'maven'
+        java-version: ${{ matrix.java-version }}
+        distribution: ${{ matrix.distribution }}
+        cache: maven
 
     - name: Install dependencies
       run: mvn -q install -Dgpg.skip
