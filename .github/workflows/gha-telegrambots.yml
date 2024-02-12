@@ -1,6 +1,12 @@
 name: Java CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - 'master'
 
 jobs:
   build:
@@ -9,15 +15,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         java-version: ['11', '11-ea', 'openjdk11', 'openjdk-ea']
-        include:
-          - java-version: '11'
-            distribution: 'adopt'
-          - java-version: '11-ea'
-            distribution: 'adopt'
-          - java-version: 'openjdk11'
-            distribution: 'adopt'
-          - java-version: 'openjdk-ea'
-            distribution: 'adopt'
         exclude:
           - java-version: '11-ea'
           - java-version: 'openjdk-ea'
@@ -27,11 +24,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up JDK
+    - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.java-version }}
-        distribution: ${{ matrix.distribution }}
+        distribution: 'adopt'
         cache: maven
 
     - name: Install dependencies
