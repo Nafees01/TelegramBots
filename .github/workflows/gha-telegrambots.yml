@@ -17,11 +17,10 @@ jobs:
           - jdk: openjdk-ea
             label: OpenJDK-EA
         exclude:
-          # Define JDK versions that are allowed to fail
           - jdk: oraclejdk-ea
           - jdk: openjdk-ea
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v2
@@ -31,17 +30,10 @@ jobs:
       with:
         java-version: ${{ matrix.jdk }}
         distribution: 'adopt'
-        cache: maven
+        cache: 'maven'
 
     - name: Install dependencies
       run: mvn -q install -Dgpg.skip
 
     - name: Build and test
       run: mvn -q clean compile test
-
-
-cache:
-  paths:
-    - $HOME/.m2
-
-
