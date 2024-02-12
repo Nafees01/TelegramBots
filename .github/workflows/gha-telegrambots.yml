@@ -1,0 +1,47 @@
+name: Java CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - jdk: oraclejdk11
+            label: JDK11
+          - jdk: oraclejdk-ea
+            label: JDK-EA
+          - jdk: openjdk11
+            label: OpenJDK11
+          - jdk: openjdk-ea
+            label: OpenJDK-EA
+        exclude:
+          # Define JDK versions that are allowed to fail
+          - jdk: oraclejdk-ea
+          - jdk: openjdk-ea
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up JDK ${{ matrix.label }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.jdk }}
+        distribution: 'adopt'
+        cache: maven
+
+    - name: Install dependencies
+      run: mvn -q install -Dgpg.skip
+
+    - name: Build and test
+      run: mvn -q clean compile test
+
+
+cache:
+  paths:
+    - $HOME/.m2
+
+
